@@ -3,6 +3,10 @@
 #define LIB_BEGIN namespace lib {
 #define LIB_END }
 
+// #define EXCLUDE_SAL // If you wish to not use SAL warnings.
+
+// Do NOT modify anything below this line.
+
 #define IN_RANGE(n, lo, hi) ((lo <= n) && (n <= hi))
 #define ARRAY_LENGTH(_Array) (sizeof(_Array) / sizeof(_Array[0]))
 
@@ -13,8 +17,6 @@
 
 #define TO_LOWERCASE(c) (c + '\x20')
 #define TO_UPPERCASE(c) (c - '\x20')
-
-// #define EXCLUDE_SAL // If you wish to not use SAL warnings.
 
 #ifdef EXCLUDE_SAL
 #undef _In_

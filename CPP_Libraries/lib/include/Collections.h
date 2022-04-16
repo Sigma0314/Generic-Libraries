@@ -135,7 +135,7 @@ class Heap2DArray {
 	bool _Allocated;
 
 public:
-	_Ty*& operator[](size_t i) const { return this->_Array[i]; }
+	_Ty*& operator[](size_t i) { return this->_Array[i]; }
 
 	Heap2DArray() : _Size1(NULL), _Size2(NULL), _Array(nullptr), _Allocated(false) {}
 
@@ -164,7 +164,7 @@ class Heap3DArray {
 	bool _Allocated;
 
 public:
-	_Ty**& operator[](size_t nIndex) const { return this->_Array[nIndex]; }
+	_Ty**& operator[](size_t nIndex) { return this->_Array[nIndex]; }
 
 	Heap3DArray() : _Size1(NULL), _Size2(NULL), _Size3(NULL), _Array(nullptr), _Allocated(false) {}
 
