@@ -1,6 +1,8 @@
 ﻿using System.Runtime.InteropServices;
 using System.Diagnostics;
 
+using Lib.Error;
+
 namespace Lib
 {
     namespace Memory
@@ -88,63 +90,115 @@ namespace Lib
             public ulong ModuleBase { get { return _Base; } }
             public uint ModuleSize { get { return _Size; } }
 
-            public External(string _ProcessName, string? _ModuleName = null)
+            private bool Init(string _ProcessName, string? _ModuleName, out LibraryException? _Exception, bool _SuppressHandler)
             {
-                Process[] procArr = Process.GetProcessesByName(_ProcessName);
-                Debug.Assert(procArr.Length > 0);
-
-                Process proc = procArr[0];
-                _ProcessId = (uint)proc.Id;
-
-                ProcessModule? mod = null;
-                if (_ModuleName != null)
+                try
                 {
-                    for (int i = 0; i < proc.Modules.Count; i++)
-                        if (proc.Modules[i].ModuleName == _ModuleName)
+                    Process[] procArr = Process.GetProcessesByName(_ProcessName);
+                    if (procArr.Length <= 0) throw new LibraryException(ErrorMessage.ProcessEntryNotFoundError, _SuppressHandler);
+            
+                    Process proc = procArr[0];
+                    _ProcessId = (uint)proc.Id;
+            
+                    ProcessModule? mod = null;
+                    if (_ModuleName != null)
+                    {
+                        for (int i = 0; i < proc.Modules.Count; i++)
                         {
-                            mod = proc.Modules[i];
-                            break;
+                            if (proc.Modules[i].ModuleName == _ModuleName)
+                            {
+                                mod = proc.Modules[i];
+                                break;
+                            }
                         }
+                    }
+                    else mod = proc.MainModule;
+                    
+                    if (mod == null) throw new LibraryException(ErrorMessage.ModuleEntryNotFoundError, _SuppressHandler);
+            
+                    _Base = (ulong)mod.BaseAddress;
+                    _Size = (uint)mod.ModuleMemorySize;
+            
+                    _Handle = OpenProcess(OpenProcessFlags.CreateThread | OpenProcessFlags.QueryInformation | OpenProcessFlags.VmOperation | OpenProcessFlags.VmRead | OpenProcessFlags.VmWrite, false, _ProcessId);
+                    if (_Handle == IntPtr.Zero) throw new LibraryException(ErrorMessage.OpenProcessError, _SuppressHandler, true);
+            
+                    _Exception = null;
+                    return true;
                 }
-                else
+                catch (LibraryException e)
                 {
-                    _ProcessName += ".exe";
-                    for (int i = 0; i < proc.Modules.Count; i++)
-                        if (proc.Modules[i].ModuleName == _ProcessName)
-                        {
-                            mod = proc.Modules[i];
-                            break;
-                        }
+                    _Exception = e;
+                    return false;
                 }
-
-                Debug.Assert(mod != null);
-
-                _Base = (ulong)mod.BaseAddress;
-                _Size = (uint)mod.ModuleMemorySize;
-
-                _Handle = OpenProcess(OpenProcessFlags.CreateThread | OpenProcessFlags.QueryInformation | OpenProcessFlags.VmOperation | OpenProcessFlags.VmRead | OpenProcessFlags.VmWrite, false, _ProcessId);
-                Debug.Assert(_Handle != IntPtr.Zero);
             }
 
-            ~External()
+            public External(string _ProcessName, string? _ModuleName, out LibraryException? _Exception, bool _SuppressHandler = false) => Init(_ProcessName, _ModuleName, out _Exception, _SuppressHandler);
+
+            public External(string _ProcessName, string? _ModuleName = null, bool _SuppressHandler = false)
             {
-                CloseHandle(_Handle);
+                LibraryException? e;
+                Init(_ProcessName, _ModuleName, out e, _SuppressHandler);
             }
 
-            public bool Read<T>(ulong _Address, out T _Return) where T : struct
+            ~External() => CloseHandle(_Handle);
+
+            public bool Read<T>(ulong _Address, out T _Return, out LibraryException? _Error, bool _SuppressHandler = false) where T : struct
             {
-                int nSize = Marshal.SizeOf(default(T));
+                try
+                {
+                    int nSize = Marshal.SizeOf(default(T));
+                    byte[] buffer = new byte[nSize];
 
-                byte[] buffer = new byte[nSize];
+                    ulong temp;
+                    if (!ReadProcessMemory(_Handle, (IntPtr)_Address, buffer, nSize, out temp)) throw new LibraryException(ErrorMessage.WinReadError, _SuppressHandler, true);
 
-                ulong temp;
-                ReadProcessMemory(_Handle, (IntPtr)_Address, buffer, nSize, out temp);
+                    GCHandle handle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+                    _Return = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
+                    handle.Free();
 
-                // _Return = (T)buffer;
-                _Return = default(T);
-                Console.WriteLine(typeof(T).FullName);
+                    _Error = null;
+                    return true;
+                }
+                catch (LibraryException e)
+                {
+                    _Return = default(T);
+                    _Error = e;
+                    return false;
+                }
+            }
 
-                return true;
+            public bool Read<T>(ulong _Address, out T _Return, bool _SuppressHandler = false) where T : struct
+            {
+                LibraryException? e;
+                return Read(_Address, out _Return, out e, _SuppressHandler);
+            }
+
+            public bool GetAddress(ulong _Address, uint[] _Offsets, out ulong _Return, out LibraryException? _Error, bool _SuppressHandler = false)
+            {
+                try
+                {
+                    for (int i = 0; i < _Offsets.Length; i++)
+                    {
+                        if (!Read(_Address, out _Address, out _Error, true)) throw new LibraryException(_Error, _SuppressHandler);
+                        _Address += _Offsets[i];
+                    }
+
+                    _Return = _Address;
+                    _Error = null;
+                    return true;
+                }
+                catch (LibraryException e)
+                {
+                    _Return = default(ulong);
+                    _Error = e;
+                    return false;
+                }
+            }
+
+            public bool GetAddress(ulong _Address, uint[] _Offsets, out ulong _Return, bool _SuppressHandler = false)
+            {
+                LibraryException? e;
+                return GetAddress(_Address, _Offsets, out _Return, out e, _SuppressHandler);
             }
         }
     }

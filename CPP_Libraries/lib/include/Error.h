@@ -5,7 +5,7 @@
 #include "EnvVar.h"
 #include "Const.h"
 
-#define ERROR_HANDLER(_FnName) void __fastcall _FnName(lib::Error* e)
+#define ERROR_HANDLER(_FnName) void __fastcall _FnName(NS_NAME::Error* e)
 #define CATCH_ERROR catch (Error &e) { if (_Error) *_Error = e; return false; }
 #define ERRORDEF _SuppressHandler, __FUNCTION__, __FILE__, __LINE__
 
@@ -88,7 +88,7 @@ class ErrorHandlerTy {
 
 public:
 
-	ErrorHandlerTy() : _Count(NULL) { memset(_HandlerArray, NULL, sizeof(_HandlerArray)); }
+	ErrorHandlerTy() : _Count(0) { memset(_HandlerArray, NULL, sizeof(_HandlerArray)); }
 
 	void Invoke(Error* _This) {
 		for (int i = 0; i < 128; i++)

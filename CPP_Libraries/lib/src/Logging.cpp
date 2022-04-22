@@ -78,7 +78,10 @@ Logger::Logger(
 	_In_opt_ ColorSetting _ColorSetting,
 	_In_opt_ bool _LogTime
 ) : _DefaultLogLevel(_DefaultLogLevel), _ColorSetting(_ColorSetting), _LogToStdErr(_LogToConsole), _LogToFile(_LogToFile), _LogTime(_LogTime), _LogSuccessOverride(nullptr), _LogInfoOverride(nullptr), _LogWarningOverride(nullptr), _LogErrorOverride(nullptr) {
-	if (_LogToConsole) this->hConsole = GetStdHandle(STD_ERROR_HANDLE);
+	if (_LogToConsole) {
+		this->hConsole = GetStdHandle(STD_ERROR_HANDLE);
+		SetConsoleTextAttribute(this->hConsole, 7);
+	}
 	else this->hConsole = nullptr;
 
 	if (_LogToFile) fopen_s(&this->_LogFile, "log.log", "w");

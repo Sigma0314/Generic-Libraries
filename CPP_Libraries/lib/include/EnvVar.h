@@ -1,6 +1,7 @@
 #pragma once
 
-#define LIB_BEGIN namespace lib {
+#define NS_NAME lib
+#define LIB_BEGIN namespace NS_NAME {
 #define LIB_END }
 
 // #define EXCLUDE_SAL // If you wish to not use SAL warnings.
