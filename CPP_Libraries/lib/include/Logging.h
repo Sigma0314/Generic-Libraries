@@ -1,8 +1,11 @@
-#pragma once
-#include <stdio.h>
+#ifndef LIB_LOGGING_H
+#define LIB_LOGGING_H
+
+#include <stdio.h>		// FILE, va_list, fprintf, stderr, vfprintf, fputc, 
+#include <Windows.h>	// SetConsoleTextAttribute, WORD, HANDLE, SYSTEMTIME, GetSystemTime
 
 #include "EnvVar.h"
-#include "Error.h"
+#include "Error.h"		// Error
 
 #define LOGFN_OVERRIDE(level) void __fastcall Log##level##Override(lib::Logger* _This, const char* _Format, va_list _Args)
 
@@ -67,3 +70,5 @@ private:
 };
 
 LIB_END
+
+#endif

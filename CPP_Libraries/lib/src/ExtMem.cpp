@@ -1,5 +1,9 @@
 #include "../include/ExtMem.h"
 
+#include <TlHelp32.h>	// CreateToolHelp32Snapshot, Process32FirstW, Process32NextW, Module32FirstW, Module32NextW
+						// PROCESSENTRY32W, MODULEENTRY32W
+						// TH32CS_SNAPPROCESS, TH32CS_SNAPMODULE, TH32CS_SNAPMODULE32
+
 LIB_BEGIN
 
 External::External(
@@ -72,7 +76,7 @@ External::External(
 	catch (Error e) { if (_Error) *_Error = e; return; }
 }
 
-External::~External() { CloseHandle(this->hProcess); }
+External::~External() { if (this->hProcess) CloseHandle(this->hProcess); }
 
 bool External::GetAddress(
 	_In_ Address _StartAddress,

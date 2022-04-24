@@ -1,11 +1,13 @@
-#pragma once
-#include <Windows.h>
-#include <TlHelp32.h>
+#ifndef LIB_EXTMEM_H
+#define LIB_EXTMEM_H
+
+#include <Windows.h>		// ReadProcessMemory, WriteProcessMemory, OpenProcess, CloseHandle, VirtualAllocEx, VirtualProtectEx, VirtualQueryEx, VirtualFreeEx
 
 #include "EnvVar.h"
-#include "Error.h"
-#include "MemShared.h"
-#include "Collections.h"
+#include "Error.h"			// Error
+#include "MemShared.h"		// Address, AllocationType, Byte, CE_MAX_ADDR, CE_MIN_ADDR, FreeType, MemoryProtection, Offsets, ScanProtection
+							// CheckVecMask, ParsePattern, IsProtectionValid, ResolveProtection, operator|
+#include "Collections.h"	// Vec2, Vec3, Vec4
 
 #undef GetModuleHandle
 
@@ -446,3 +448,5 @@ public:
 };
 
 LIB_END
+
+#endif

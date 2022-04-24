@@ -1,9 +1,12 @@
-#pragma once
-#include <Windows.h> // DWORD, MAX_PATH
-#include <assert.h> // assert()
+#ifndef LIB_ERROR_H
+#define LIB_ERROR_H
+
+#include <string.h> // strcpy_s
+#include <Windows.h> // DWORD, MAX_PATH, FormatMessageA, CloseHandle
+#include <assert.h> // assert
 
 #include "EnvVar.h"
-#include "Const.h"
+#include "Const.h" // Handles
 
 #define ERROR_HANDLER(_FnName) void __fastcall _FnName(NS_NAME::Error* e)
 #define CATCH_ERROR catch (Error &e) { if (_Error) *_Error = e; return false; }
@@ -120,3 +123,5 @@ public:
 ErrorHandlerTy& ErrorHandler();
 
 LIB_END
+
+#endif // !LIB_ERROR_H

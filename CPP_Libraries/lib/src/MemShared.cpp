@@ -33,7 +33,15 @@ void substr(char* _Buffer, size_t _SizeOfBuffer, const char* _String, size_t _In
 
 #define HEXC_TO_UINT(c) (IN_RANGE(c, 'A', 'F') ? c - '\x37' : (IN_RANGE(c, 'a', 'f') ? c - '\x57' : c - '\x30'));
 
-bool ParsePattern(const char* _ComboPattern, char* _Pattern, size_t _PatternSize, char* _Mask, size_t _MaskSize, Error* _Error, bool _SuppressHandler) {
+bool ParsePattern(
+	_In_ const char* _ComboPattern,
+	_Out_writes_all_(_PatternSize) char* _Pattern,
+	_In_ size_t _PatternSize,
+	_Out_writes_all_(_MaskSize) char* _Mask,
+	_In_ size_t _MaskSize,
+	_Out_opt_ Error* _Error,
+	_In_ bool _SuppressHandler
+) {
 	try {
 		if (!_Pattern || !_Mask) throw Error(ERRORDEF, Error::ReturnIsNullError);
 
@@ -103,7 +111,7 @@ bool ParsePattern(const char* _ComboPattern, char* _Pattern, size_t _PatternSize
 	CATCH_ERROR;
 }
 
-bool IsProtectionValid(ScanProtection _Protection) {
+bool IsProtectionValid(_In_ ScanProtection _Protection) {
 	switch (_Protection) {
 	case ScanProtection::Exectute_ReadWrite:
 	case ScanProtection::Execute_Read:
@@ -120,7 +128,7 @@ bool IsProtectionValid(ScanProtection _Protection) {
 	}
 }
 
-bool ResolveProtection(ScanProtection _DesiredProtection, DWORD _CurrentProtection) {
+bool ResolveProtection(_In_ ScanProtection _DesiredProtection, _In_ DWORD _CurrentProtection) {
 	switch (_DesiredProtection) {
 	case ScanProtection::Exectute_ReadWrite:
 		if (_CurrentProtection == PAGE_EXECUTE_READWRITE) return true;

@@ -24,9 +24,6 @@
     <ClCompile Include="lib\src\buffer.c">
       <Filter>Source Files\Lib Src</Filter>
     </ClCompile>
-    <ClCompile Include="CPP_Libraries.cpp">
-      <Filter>Source Files\Lib Src</Filter>
-    </ClCompile>
     <ClCompile Include="lib\src\ExtMem.cpp">
       <Filter>Source Files\Lib Src</Filter>
     </ClCompile>
@@ -59,6 +56,9 @@
     </ClCompile>
     <ClCompile Include="lib\src\Error.cpp">
       <Filter>Source Files\Lib Src</Filter>
+    </ClCompile>
+    <ClCompile Include="CPP_Libraries.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

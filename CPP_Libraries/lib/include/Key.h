@@ -1,5 +1,7 @@
-#pragma once
-#include <Windows.h>
+#ifndef LIB_KEY_H
+#define LIB_KEY_H
+
+#include <Windows.h> // VK constants, GetAsyncKeyState
 
 #include "EnvVar.h"
 
@@ -131,3 +133,5 @@ enum class VirtualKey : int {
 inline bool IsKeyPressed(VirtualKey vk) { return (GetAsyncKeyState((int)vk) & 1); }
 
 LIB_END
+
+#endif

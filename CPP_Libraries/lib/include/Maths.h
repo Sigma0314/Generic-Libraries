@@ -1,7 +1,8 @@
-#pragma once
+#ifndef LIB_MATHS_H
+#define LIB_MATHS_H
 
 #include "EnvVar.h"
-#include "Collections.h"
+#include "Collections.h" // LiteralDynamicArray, RoundedDynamicArray
 
 LIB_BEGIN
 
@@ -34,3 +35,5 @@ double Median(LiteralDynamicArray<_Ty>& _Array) {
 }
 
 LIB_END
+
+#endif

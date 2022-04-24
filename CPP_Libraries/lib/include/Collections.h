@@ -1,7 +1,10 @@
-#pragma once
-#include <string.h>
-#include <initializer_list>
-#include <Windows.h>
+#ifndef LIB_COLLECTIONS_H
+#define LIB_COLLECTIONS_H
+
+#include <string.h> // memcpy_s, memcpy
+#include <Windows.h> // RaiseException, EXCEPTION_ARRAY_BOUNDS_EXCEEDED
+
+#include <initializer_list> // std::initializer_list
 
 #include "EnvVar.h"
 
@@ -324,3 +327,5 @@ public:
 };
 
 LIB_END
+
+#endif

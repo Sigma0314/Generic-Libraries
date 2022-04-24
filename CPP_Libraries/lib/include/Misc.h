@@ -1,4 +1,6 @@
-#pragma once
+#ifndef LIB_MISC_H
+#define LIB_MISC_H
+
 #include <stdio.h>
 
 #include <Windows.h>
@@ -31,3 +33,5 @@ bool InjectDll(
 );
 
 LIB_END
+
+#endif

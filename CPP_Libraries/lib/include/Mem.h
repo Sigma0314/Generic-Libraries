@@ -1,4 +1,6 @@
-#pragma once
+#ifndef LIB_MEM_H
+#define LIB_MEM_H
+
 #include <Windows.h>
 #include <Psapi.h>
 
@@ -637,3 +639,5 @@ bool ScanValue(
 }
 
 LIB_END
+
+#endif
