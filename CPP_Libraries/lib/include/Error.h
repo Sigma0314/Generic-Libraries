@@ -48,7 +48,8 @@ public:
 		THEntryNotFoundError,
 		ArchitectureMismatchError,
 		FunctionFailedError,
-		InvalidFilePathError
+		InvalidFilePathError,
+		UnknownError
 	};
 
 	Error() : _ErrorCode((Error::Code)NULL), _WinErrorCode(NULL), _Failed(false), _LineNumber(NULL) { this->_ErrorMessage[0] = '\0'; this->_WinErrorMessage[0] = '\0'; this->_FunctionName[0] = '\0'; this->_FilePath[0] = '\0'; }

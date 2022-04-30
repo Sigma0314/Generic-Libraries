@@ -28,60 +28,66 @@ class Function {
 	Error* _GlobalError;
 	bool _UponCtorSuppressHandler;
 
-public:
+	bool _IsCallable;
 
-	Function(_In_ Address _FunctionAddress, _In_opt_ Convention _CallingConvention = Convention::FastCall, _Out_opt_ Error* _Error = nullptr, _In_opt_ bool _SuppressHandler = false) :
-		_FnAddress(_FunctionAddress), _Convention(_CallingConvention), _GlobalError(_Error), _UponCtorSuppressHandler(_SuppressHandler) {}
-
-	_TyR Call(_TyP... _Params) {
-		__try {
-			switch (this->_Convention) {
-			case Convention::Cdecl: return ((_FnCdecl)(this->_FnAddress))(_Params...);
-			case Convention::FastCall: return ((_FnFastCall)(this->_FnAddress))(_Params...);
-			case Convention::StdCall: return ((_FnStdCall)(this->_FnAddress))(_Params...);
-			case Convention::ThisCall: return ((_FnThisCall)(this->_FnAddress))(_Params...);
-			case Convention::VectorCall: return ((_FnVectorCall)(this->_FnAddress))(_Params...);
-			default:
-				Error e = Error(this->_UponCtorSuppressHandler, __FUNCTION__, __FILE__, __LINE__, Error::ParameterInvalidError);
-				if (this->_GlobalError) *this->_GlobalError = e;
-				return (_TyR)(NULL);
-			}
-		}
-		__except (EXCEPTION_EXECUTE_HANDLER) {
-			Error e = Error(this->_UponCtorSuppressHandler, __FUNCTION__, __FILE__, __LINE__ - 9 + (int)this->_Convention, Error::FunctionFailedError);
-			if (this->_GlobalError) *this->_GlobalError = e;
-			return (_TyR)(NULL);
-		}
-	}
-
-	_TyR operator()(_TyP... _Params) { return this->Call(_Params...); }
-
-	static bool Call(_In_ Address _Address, _In_ Convention _CallingConvention, _Out_opt_ Error* _Error, _In_ bool _SuppressHandler, _Out_opt_ _TyR* _Return, _In_opt_ _TyP... _Params) {
-		_TyR _Buffer;
+	static DWORD _Call(Address _Address, Convention _CallingConvention, _TyR* _Return, _TyP... _Params) {
 		__try {
 			switch (_CallingConvention) {
-			case Convention::Cdecl: _Buffer = ((_FnCdecl)(_Address))(_Params...); break;
-			case Convention::FastCall: _Buffer = ((_FnFastCall)(_Address))(_Params...); break;
-			case Convention::StdCall: _Buffer = ((_FnStdCall)(_Address))(_Params...); break;
-			case Convention::ThisCall: _Buffer = ((_FnThisCall)(_Address))(_Params...); break;
-			case Convention::VectorCall: _Buffer = ((_FnVectorCall)(_Address))(_Params...); break;
-			default:
-				Error e = Error(ERRORDEF, Error::ParameterInvalidError);
-				if (_Error) *_Error = e;
-				return false;
+			case Convention::Cdecl: *_Return = ((_FnCdecl)(_Address))(_Params...); break;
+			case Convention::FastCall: *_Return = ((_FnFastCall)(_Address))(_Params...); break;
+			case Convention::StdCall: *_Return = ((_FnStdCall)(_Address))(_Params...); break;
+			case Convention::ThisCall: *_Return = ((_FnThisCall)(_Address))(_Params...); break;
+			case Convention::VectorCall: *_Return = ((_FnVectorCall)(_Address))(_Params...); break;
+			default: return 1;
+			}
+
+			return 0;
+		}
+		__except (EXCEPTION_EXECUTE_HANDLER) { return 2; }
+	}
+
+public:
+
+	Function() : _FnAddress(NULL), _Convention((Convention)NULL), _GlobalError(nullptr), _UponCtorSuppressHandler(false), _IsCallable(false) {}
+
+	Function(_In_ Address _FunctionAddress, _In_opt_ Convention _CallingConvention = Convention::FastCall, _Out_opt_ Error* _Error = nullptr, _In_opt_ bool _SuppressHandler = false) :
+		_FnAddress(_FunctionAddress), _Convention(_CallingConvention), _GlobalError(_Error), _UponCtorSuppressHandler(_SuppressHandler), _IsCallable(true) {}
+
+	_TyR Call(_TyP... _Params) {
+		if (!this->_IsCallable) return (_TyR)NULL;
+
+		try {
+			_TyR _Buffer;
+
+			switch (this->_Call(this->_FnAddress, this->_Convention, &_Buffer, _Params...)) {
+			case 0: return _Buffer;
+			case 1: throw Error(this->_UponCtorSuppressHandler, __FUNCTION__, __FILE__, __LINE__, Error::ParameterInvalidError);
+			case 2: throw Error(this->_UponCtorSuppressHandler, __FUNCTION__, __FILE__, __LINE__, Error::FunctionFailedError);
+			default: throw Error(this->_UponCtorSuppressHandler, __FUNCTION__, __FILE__, __LINE__, Error::UnknownError);
+			}
+		}
+		catch (Error& e) { if (this->_GlobalError) *this->_GlobalError = e; return (_TyR)NULL; }
+	}
+
+	_TyR operator()(_TyP... _Params) { if (this->_IsCallable) return this->Call(_Params...); else return (_TyR)NULL; }
+
+	static bool Call(_In_ Address _Address, _In_ Convention _CallingConvention, _Out_opt_ Error* _Error, _In_ bool _SuppressHandler, _Out_opt_ _TyR* _Return, _In_opt_ _TyP... _Params) {
+		try {
+			_TyR _Buffer;
+			switch (_Call(_Address, _CallingConvention, &_Buffer, _Params...)) {
+			case 0: break;
+			case 1: throw Error(ERRORDEF, Error::ParameterInvalidError);
+			case 2: throw Error(ERRORDEF, Error::FunctionFailedError);
+			default: throw Error(ERRORDEF, Error::UnknownError);
 			}
 
 			if (_Return) *_Return = _Buffer;
 			return true;
 		}
-		__except (EXCEPTION_EXECUTE_HANDLER) {
-			Error e = Error(_SuppressHandler, __FUNCTION__, __FILE__, __LINE__ - 9 + (int)_CallingConvention, Error::FunctionFailedError);
-			if (_Error) *_Error = e;
-			return false;
-		}
+		catch (Error& e) { if (_Error) *_Error = e; return false; }
 	}
 
-	static _TyR _Call(_In_ Address _Address, _In_ Convention _CallingConvention, _In_opt_ _TyP... _Params) {
+	static _TyR Call(_In_ Address _Address, _In_ Convention _CallingConvention, _In_opt_ _TyP... _Params) {
 		__try {
 			switch (_CallingConvention) {
 			case Convention::Cdecl: return ((_FnCdecl)(_Address))(_Params...);
@@ -93,6 +99,90 @@ public:
 			}
 		}
 		__except (EXCEPTION_EXECUTE_HANDLER) { return (_TyR)(NULL); }
+	}
+};
+
+template<typename... _TyP>
+class VoidFunction {
+	using _FnCdecl = void(__cdecl*)(_TyP...);
+	using _FnFastCall = void(__fastcall*)(_TyP...);
+	using _FnStdCall = void(__stdcall*)(_TyP...);
+	using _FnThisCall = void(__thiscall*)(_TyP...);
+	using _FnVectorCall = void(__vectorcall*)(_TyP...);
+
+	Address _FnAddress;
+	Convention _Convention;
+
+	Error* _GlobalError;
+	bool _UponCtorSuppressHandler;
+
+	bool _IsCallable;
+
+	static DWORD _Call(Address _Address, Convention _CallingConvention, _TyP... _Params) {
+		__try {
+			switch (_CallingConvention) {
+			case Convention::Cdecl: ((_FnCdecl)(_Address))(_Params...); break;
+			case Convention::FastCall: ((_FnFastCall)(_Address))(_Params...); break;
+			case Convention::StdCall: ((_FnStdCall)(_Address))(_Params...); break;
+			case Convention::ThisCall: ((_FnThisCall)(_Address))(_Params...); break;
+			case Convention::VectorCall: ((_FnVectorCall)(_Address))(_Params...); break;
+			default: return 1;
+			}
+
+			return 0;
+		}
+		__except (EXCEPTION_EXECUTE_HANDLER) { return 2; }
+	}
+
+public:
+
+	VoidFunction() : _FnAddress(NULL), _Convention((Convention)NULL), _GlobalError(nullptr), _UponCtorSuppressHandler(false), _IsCallable(false) {}
+
+	VoidFunction(_In_ Address _FunctionAddress, _In_opt_ Convention _CallingConvention = Convention::FastCall, _Out_opt_ Error* _Error = nullptr, _In_opt_ bool _SuppressHandler = false) :
+		_FnAddress(_FunctionAddress), _Convention(_CallingConvention), _GlobalError(_Error), _UponCtorSuppressHandler(_SuppressHandler), _IsCallable(true) {}
+
+	void Call(_TyP... _Params) {
+		if (!this->_IsCallable) return;
+
+		try {
+			switch (this->_Call(this->_FnAddress, this->_Convention, _Params...)) {
+			case 0: return;
+			case 1: throw Error(this->_UponCtorSuppressHandler, __FUNCTION__, __FILE__, __LINE__, Error::ParameterInvalidError);
+			case 2: throw Error(this->_UponCtorSuppressHandler, __FUNCTION__, __FILE__, __LINE__, Error::FunctionFailedError);
+			default: throw Error(this->_UponCtorSuppressHandler, __FUNCTION__, __FILE__, __LINE__, Error::UnknownError);
+			}
+		}
+		catch (Error& e) { if (this->_GlobalError) *this->_GlobalError = e; return; }
+	}
+
+	void operator()(_TyP... _Params) { if (this->_IsCallable) this->Call(_Params...); }
+
+	static bool Call(_In_ Address _Address, _In_ Convention _CallingConvention, _Out_opt_ Error* _Error, _In_ bool _SuppressHandler, _In_opt_ _TyP... _Params) {
+		try {
+			switch (_Call(_Address, _CallingConvention, _Params...)) {
+			case 0: break;
+			case 1: throw Error(ERRORDEF, Error::ParameterInvalidError);
+			case 2: throw Error(ERRORDEF, Error::FunctionFailedError);
+			default: throw Error(ERRORDEF, Error::UnknownError);
+			}
+
+			return true;
+		}
+		catch (Error& e) { if (_Error) *_Error = e; return false; }
+	}
+
+	static void Call(_In_ Address _Address, _In_ Convention _CallingConvention, _In_opt_ _TyP... _Params) {
+		__try {
+			switch (_CallingConvention) {
+			case Convention::Cdecl: ((_FnCdecl)(_Address))(_Params...);
+			case Convention::FastCall: ((_FnFastCall)(_Address))(_Params...);
+			case Convention::StdCall: ((_FnStdCall)(_Address))(_Params...);
+			case Convention::ThisCall: ((_FnThisCall)(_Address))(_Params...);
+			case Convention::VectorCall: ((_FnVectorCall)(_Address))(_Params...);
+			default: return;
+			}
+		}
+		__except (EXCEPTION_EXECUTE_HANDLER) { return; }
 	}
 };
 

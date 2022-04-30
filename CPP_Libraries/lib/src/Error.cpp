@@ -39,7 +39,7 @@ bool Error::GetErrorMessageFromCode(lib::Error::Code _ErrorCode, char* _Buffer, 
 		case Error::BufferTooSmallError:
 			throw "The referenced buffer is too small for the operation executed by this function.";
 		case Error::GenericWinApiFunctionError:
-			throw "A Windows API function has failed unexpectedly. Call the GetWindowsError() member function for more error information.";
+			throw "A Windows API function has failed unexpectedly. Call the GetWindowsError() member method for more error information.";
 		case Error::ParameterInvalidError:
 			throw "A parameter has a value that is deemed as invalid by this function.";
 		case Error::ReadError:
@@ -53,18 +53,18 @@ bool Error::GetErrorMessageFromCode(lib::Error::Code _ErrorCode, char* _Buffer, 
 			throw "An entry of the process/module looked for has not been found. Double check the names and try again.";
 		case Error::MH_ERROR_MEMORY_ALLOC:
 		case Error::VirtualAllocError:
-			throw "VirtualAlloc has failed unexpectedly. Call the GetWindowsError() member function for more error information.";
+			throw "VirtualAlloc has failed unexpectedly. Call the GetWindowsError() member method for more error information.";
 		case Error::VirtualFreeError:
-			throw "VirtualFree has failed unexpectedly. Call the GetWindowsError() member function for more error information.";
+			throw "VirtualFree has failed unexpectedly. Call the GetWindowsError() member method for more error information.";
 		case Error::MH_ERROR_MEMORY_PROTECT:
 		case Error::VirtualProtectError:
-			throw "VirtualProtect has failed unexpectedly. Call the GetWindowsError() member function for more error information.";
+			throw "VirtualProtect has failed unexpectedly. Call the GetWindowsError() member method for more error information.";
 		case Error::VirtualQueryError:
-			throw "VirtualQuery has failed unexpectedly. Call the GetWindowsError() member function for more error information.";
+			throw "VirtualQuery has failed unexpectedly. Call the GetWindowsError() member method for more error information.";
 		case Error::WinReadError:
-			throw "A read operation has failed. Call the GetWindowsError() member function for more error information.";
+			throw "A read operation has failed. Call the GetWindowsError() member method for more error information.";
 		case Error::WinWriteError:
-			throw "A write operation has failed. Call the GetWindowsError() member function for more error information.";
+			throw "A write operation has failed. Call the GetWindowsError() member method for more error information.";
 		case Error::WriteError:
 			throw "A write operation has raised an exception and failed.";
 		case Error::ArchitectureMismatchError:
@@ -73,6 +73,8 @@ bool Error::GetErrorMessageFromCode(lib::Error::Code _ErrorCode, char* _Buffer, 
 			throw "A templated function call failed unexpectedly.";
 		case Error::InvalidFilePathError:
 			throw "The file path specified is invalid.";
+		case Error::UnknownError:
+			throw "An unknown error has occured.";
 
 		default:
 			return false;
