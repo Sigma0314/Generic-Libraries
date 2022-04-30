@@ -115,7 +115,10 @@ void Logger::Log(_In_z_ _Printf_format_string_ const char* _Format, ...) {
 void Logger::LogSuccess(_In_z_ _Printf_format_string_ const char* _Format, ...) {
 	va_list v1;
 	va_start(v1, _Format);
-	if (this->_LogSuccessOverride) this->_LogSuccessOverride(this, _Format, v1);
+	if (this->_LogSuccessOverride) {
+		if (this->_LogSuccessOverride(this->RefreshFlags(), _Format, v1))
+			this->_LogSuccess(_Format, v1);
+	}
 	else this->_LogSuccess(_Format, v1);
 	va_end(v1);
 }
@@ -123,7 +126,10 @@ void Logger::LogSuccess(_In_z_ _Printf_format_string_ const char* _Format, ...) 
 void Logger::LogInfo(_In_z_ _Printf_format_string_ const char* _Format, ...) {
 	va_list v1;
 	va_start(v1, _Format);
-	if (this->_LogInfoOverride) this->_LogInfoOverride(this, _Format, v1);
+	if (this->_LogInfoOverride) {
+		if (this->_LogInfoOverride(this->RefreshFlags(), _Format, v1))
+			this->_LogInfo(_Format, v1);
+	}
 	else this->_LogInfo(_Format, v1);
 	va_end(v1);
 }
@@ -131,7 +137,10 @@ void Logger::LogInfo(_In_z_ _Printf_format_string_ const char* _Format, ...) {
 void Logger::LogWarning(_In_z_ _Printf_format_string_ const char* _Format, ...) {
 	va_list v1;
 	va_start(v1, _Format);
-	if (this->_LogWarningOverride) this->_LogWarningOverride(this, _Format, v1);
+	if (this->_LogWarningOverride) {
+		if (this->_LogWarningOverride(this->RefreshFlags(), _Format, v1))
+			this->_LogWarning(_Format, v1);
+	}
 	else this->_LogWarning(_Format, v1);
 	va_end(v1);
 }
@@ -139,12 +148,15 @@ void Logger::LogWarning(_In_z_ _Printf_format_string_ const char* _Format, ...) 
 void Logger::LogError(_In_z_ _Printf_format_string_ const char* _Format, ...) {
 	va_list v1;
 	va_start(v1, _Format);
-	if (this->_LogErrorOverride) this->_LogErrorOverride(this, _Format, v1);
+	if (this->_LogErrorOverride) {
+		if (this->_LogErrorOverride(this->RefreshFlags(), _Format, v1))
+			this->_LogError(_Format, v1);
+	}
 	else this->_LogError(_Format, v1);
 	va_end(v1);
 }
 
-void Logger::OverrideLogFunction(_In_opt_ void(__fastcall* _LogOverride)(Logger*, const char*, va_list), _In_ LogLevel _Level) {
+void Logger::OverrideLogFunction(_In_opt_ LoggerOverrideFunctionTy _LogOverride, _In_ LogLevel _Level) {
 	switch (_Level) {
 	case LogLevel::Success:
 		this->_LogSuccessOverride = _LogOverride;

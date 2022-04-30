@@ -10,7 +10,6 @@ LIB_BEGIN
 enum class VirtualKey : int {
 	LeftMouseButton = VK_LBUTTON,
 	RightMouseButton = VK_RBUTTON,
-	UNDEFINED_CANCEL = VK_CANCEL, // MSDN annotation: "Control-break processing"
 	MiddleMouseButton = VK_MBUTTON,
 	LowerMouseSideButton = VK_XBUTTON1,
 	UpperMouseSideButton = VK_XBUTTON2,
