@@ -2,176 +2,197 @@
 
 LIB_BEGIN
 
-void Logger::_Log(const char* _Prefix, WORD _ConsoleAttribute, const char* _Format, va_list _Args) {
-	if (this->_ColorSetting == ColorSetting::All) SetConsoleTextAttribute(this->hConsole, _ConsoleAttribute);
-
-	if (this->_LogTime) {
-		SYSTEMTIME st;
-		GetSystemTime(&st);
-
-		if (this->_ColorSetting != ColorSetting::All && this->_ColorSetting == ColorSetting::PrefixAndTime) {
-			if (this->_LogToStdErr) {
-				fprintf(stderr, "[");
-				SetConsoleTextAttribute(this->hConsole, _ConsoleAttribute);
-				fprintf(stderr, "%hi-%hi-%hi %hi:%hi:%hi", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
-				SetConsoleTextAttribute(this->hConsole, 7);
-				fprintf(stderr, "] ");
-			}
-
-			if (this->_LogToFile) fprintf(this->_LogFile, "[%hi-%hi-%hi %hi:%hi:%hi] ", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
-		}
-
-		else {
-			if (this->_LogToStdErr) fprintf(stderr, "[%hi-%hi-%hi %hi:%hi:%hi] ", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
-			if (this->_LogToFile) fprintf(this->_LogFile, "[%hi-%hi-%hi %hi:%hi:%hi] ", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
-		}
-	}
-
-	if (this->_ColorSetting != ColorSetting::All && (this->_ColorSetting == ColorSetting::PrefixOnly || this->_ColorSetting == ColorSetting::PrefixAndTime)) {
-		if (this->_LogToStdErr) {
-			fprintf(stderr, "[");
-			SetConsoleTextAttribute(this->hConsole, _ConsoleAttribute);
-			fprintf(stderr, "%s", _Prefix);
-			SetConsoleTextAttribute(this->hConsole, 7);
-			fprintf(stderr, "] ");
-		}
-
-		if (this->_LogToFile) fprintf(this->_LogFile, "[%s] ", _Prefix);
-	}
-
-	else {
-		if (this->_LogToStdErr) fprintf(stderr, "[%s] ", _Prefix);
-		if (this->_LogToFile) fprintf(this->_LogFile, "[%s] ", _Prefix);
-	}
-
-	if (this->_ColorSetting != ColorSetting::All && this->_ColorSetting == ColorSetting::TextOnly) {
-		if (this->_LogToStdErr) {
-			SetConsoleTextAttribute(this->hConsole, _ConsoleAttribute);
-			vfprintf(stderr, _Format, _Args);
-			SetConsoleTextAttribute(this->hConsole, 7);
-		}
-
-		if (this->_LogToFile) vfprintf(this->_LogFile, _Format, _Args);
-	}
-
-	else {
-		if (this->_LogToStdErr) vfprintf(stderr, _Format, _Args);
-		if (this->_LogToFile) vfprintf(this->_LogFile, _Format, _Args);
-	}
-
-	if (this->_LogToStdErr) fputc('\n', stderr);
-	if (this->_LogToFile) fputc('\n', this->_LogFile);
+void Logger::LoggerEvent::Invoke(Logger* _This, LoggerParams* _Params, const char* _Prefix, const char* _Format, va_list _Args) {
+	for (int i = 0; i < 128; i++)
+		if (_HandlerArray[i])
+			_HandlerArray[i](_This, _Params, _Prefix, _Format, _Args);
 }
 
-void Logger::_LogSuccess(const char* _Format, va_list _Args) { this->_Log("SUCCESS", FOREGROUND_GREEN, _Format, _Args); }
-	 
-void Logger::_LogInfo(const char* _Format, va_list _Args) { this->_Log("INFO", FOREGROUND_BLUE | FOREGROUND_INTENSITY, _Format, _Args); }
-	 
-void Logger::_LogWarning(const char* _Format, va_list _Args) { this->_Log("WARNING", FOREGROUND_RED | FOREGROUND_GREEN, _Format, _Args); }
-	 
-void Logger::_LogError(const char* _Format, va_list _Args) { this->_Log("ERROR", FOREGROUND_RED, _Format, _Args); }
+bool Logger::LoggerEvent::Add(tLoggerFunction _Handler) {
+	if (_Count >= 128) return false;
 
-Logger::Logger(
-	_In_ bool _LogToConsole,
-	_In_ bool _LogToFile,
-	_In_opt_ LogLevel _DefaultLogLevel,
-	_In_opt_ ColorSetting _ColorSetting,
-	_In_opt_ bool _LogTime
-) : _DefaultLogLevel(_DefaultLogLevel), _ColorSetting(_ColorSetting), _LogToStdErr(_LogToConsole), _LogToFile(_LogToFile), _LogTime(_LogTime), _LogSuccessOverride(nullptr), _LogInfoOverride(nullptr), _LogWarningOverride(nullptr), _LogErrorOverride(nullptr) {
-	if (_LogToConsole) {
-		this->hConsole = GetStdHandle(STD_ERROR_HANDLE);
-		SetConsoleTextAttribute(this->hConsole, 7);
-	}
-	else this->hConsole = nullptr;
+	for (int i = 0; i < 128; i++)
+		if (_HandlerArray[i] == _Handler)
+			return false;
 
-	if (_LogToFile) fopen_s(&this->_LogFile, "log.log", "w");
-	else this->_LogFile = nullptr;
+	for (int i = 0; i < 128; i++)
+		if (!_HandlerArray[i]) {
+			_HandlerArray[i] = _Handler;
+			_Count++;
+			return true;
+		}
+
+	return false;
 }
 
-Logger::~Logger() { if (this->_LogToFile) fclose(this->_LogFile); }
+bool Logger::LoggerEvent::Remove(tLoggerFunction _Handler) {
+	for (int i = 0; i < 128; i++)
+		if (_HandlerArray[i] == _Handler) {
+			_HandlerArray[i] = nullptr;
+			_Count--;
+			return true;
+		}
+	return false;
+};
 
-void Logger::Log(_In_z_ _Printf_format_string_ const char* _Format, ...) {
-	va_list v1;
-	va_start(v1, _Format);
-	switch (this->_DefaultLogLevel) {
-	case LogLevel::Success:
-		this->_LogSuccess(_Format, v1);
-		break;
-	case LogLevel::Info:
-		this->_LogInfo(_Format, v1);
-		break;
-	case LogLevel::Warning:
-		this->_LogWarning(_Format, v1);
-		break;
-	case LogLevel::Error:
-		this->_LogError(_Format, v1);
-		break;
-	default:
-		break;
+LoggerParams* Logger::GetParams() {
+	p = {
+		isCEX,
+		isConsole,
+		isFile,
+		isEvent,
+		logTime,
+		printColor,
+		cexInst,
+		hConsole,
+		pFile
+	};
+
+	return &p;
+}
+
+void Logger::_BasicLogFile(FILE* pFile, bool bLogTime, const char* pPrefix, const char* pFormat, va_list pArgs) {
+	if (bLogTime) {
+		char szBuffer[64];
+		GetSystemDateTime(szBuffer, 64);
+
+		fprintf(pFile, "[%s] ", szBuffer);
 	}
-	va_end(v1);
+
+	fprintf(pFile, "[%s] ", pPrefix);
+	vfprintf(pFile, pFormat, pArgs);
+	fputc('\n', pFile);
+}
+
+void Logger::_BasicLogConsole(FILE* pStream, bool bLogTime, bool bPrintColor, HANDLE hOut, WORD wColor, const char* pPrefix, const char* pFormat, va_list pArgs) {
+	if (bLogTime) {
+		char szBuffer[64];
+		GetSystemDateTime(szBuffer, 64);
+
+		fprintf(pStream, "[%s] ", szBuffer);
+	}
+
+	if (bPrintColor) {
+		fputc('[', pStream);
+		SetConsoleTextAttribute(hOut, wColor);
+		fprintf(pStream, "%s", pPrefix);
+		SetConsoleTextAttribute(hOut, 7);
+		fputs("] ", pStream);
+	}
+	else { fprintf(pStream, "[%s] ", pPrefix); }
+
+	vfprintf(pStream, pFormat, pArgs);
+	fputc('\n', pStream);
+}
+
+void Logger::_BasicLogCEX(ConsoleEx* pConsoleEx, bool bLogTime, bool bPrintColor, WORD wColor, const char* pPrefix, const char* pFormat, va_list pArgs) {
+	if (bLogTime) {
+		char szBuffer[64];
+		GetSystemDateTime(szBuffer, 64);
+
+		pConsoleEx->printf("[%s] ", szBuffer);
+	}
+
+	if (bPrintColor) {
+		pConsoleEx->printf("[");
+		// pConsoleEx->SetConsoleTextAttribute(wColor);
+		// pConsoleEx->printf("%s", pPrefix);
+		// pConsoleEx->SetConsoleTextAttribute(7);
+		pConsoleEx->printfc(wColor, "%s", pPrefix);
+		pConsoleEx->printf("] ");
+	}
+	else { pConsoleEx->printf("[%s] ", pPrefix); }
+
+	pConsoleEx->vprintf(pFormat, pArgs);
+	pConsoleEx->printf("\n");
+}
+
+Logger::Logger(bool _Console, bool _File, bool _Event, bool _PrintColor, bool _PrintTime) : isConsole(_Console), isFile(_File), isEvent(_Event), isCEX(false), printColor(_PrintColor), logTime(_PrintTime), cexInst(nullptr) {
+	if (_Console) {
+		hConsole = GetStdHandle(STD_ERROR_HANDLE);
+		SetConsoleTextAttribute(hConsole, 7);
+	}
+	else hConsole = nullptr;
+
+	if (_File) fopen_s(&pFile, "log.log", "w");
+	else pFile = nullptr;
+}
+
+Logger::Logger(ConsoleEx* _ConsoleEx, bool _PrintColor, bool _PrintTime) : isConsole(false), isFile(false), isEvent(false), isCEX(true), printColor(_PrintColor), logTime(_PrintTime), cexInst(_ConsoleEx), hConsole(nullptr), pFile(nullptr) {
+	_ConsoleEx->SetConsoleTextAttribute(7);
 }
 
 void Logger::LogSuccess(_In_z_ _Printf_format_string_ const char* _Format, ...) {
 	va_list v1;
 	va_start(v1, _Format);
-	if (this->_LogSuccessOverride) {
-		if (this->_LogSuccessOverride(this->RefreshFlags(), _Format, v1))
-			this->_LogSuccess(_Format, v1);
-	}
-	else this->_LogSuccess(_Format, v1);
+	if (isConsole) _BasicLogConsole(stderr, logTime, printColor, hConsole, FOREGROUND_GREEN, "SUCCESS", _Format, v1);
+	if (isFile) _BasicLogFile(pFile, logTime, "SUCCESS", _Format, v1);
+	if (isCEX) _BasicLogCEX(cexInst, logTime, printColor, FOREGROUND_GREEN, "SUCCESS", _Format, v1);
+	if (isEvent) this->SuccessEvent.Invoke(this, GetParams(), "SUCCESS", _Format, v1);
+
 	va_end(v1);
 }
 
 void Logger::LogInfo(_In_z_ _Printf_format_string_ const char* _Format, ...) {
 	va_list v1;
 	va_start(v1, _Format);
-	if (this->_LogInfoOverride) {
-		if (this->_LogInfoOverride(this->RefreshFlags(), _Format, v1))
-			this->_LogInfo(_Format, v1);
-	}
-	else this->_LogInfo(_Format, v1);
+	if (isConsole) _BasicLogConsole(stderr, logTime, printColor, hConsole, FOREGROUND_BLUE | FOREGROUND_INTENSITY, "INFO", _Format, v1);
+	if (isFile) _BasicLogFile(pFile, logTime, "INFO", _Format, v1);
+	if (isCEX) _BasicLogCEX(cexInst, logTime, printColor, FOREGROUND_BLUE | FOREGROUND_INTENSITY, "INFO", _Format, v1);
+	// Insert event.
+
 	va_end(v1);
 }
 
 void Logger::LogWarning(_In_z_ _Printf_format_string_ const char* _Format, ...) {
 	va_list v1;
 	va_start(v1, _Format);
-	if (this->_LogWarningOverride) {
-		if (this->_LogWarningOverride(this->RefreshFlags(), _Format, v1))
-			this->_LogWarning(_Format, v1);
-	}
-	else this->_LogWarning(_Format, v1);
+	if (isConsole) _BasicLogConsole(stderr, logTime, printColor, hConsole, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY, "WARNING", _Format, v1);
+	if (isFile) _BasicLogFile(pFile, logTime, "WARNING", _Format, v1);
+	if (isCEX) _BasicLogCEX(cexInst, logTime, printColor, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY, "WARNING", _Format, v1);
+	// Insert event.
+
 	va_end(v1);
 }
 
 void Logger::LogError(_In_z_ _Printf_format_string_ const char* _Format, ...) {
 	va_list v1;
 	va_start(v1, _Format);
-	if (this->_LogErrorOverride) {
-		if (this->_LogErrorOverride(this->RefreshFlags(), _Format, v1))
-			this->_LogError(_Format, v1);
-	}
-	else this->_LogError(_Format, v1);
+	if (isConsole) _BasicLogConsole(stderr, logTime, printColor, hConsole, FOREGROUND_RED, "ERROR", _Format, v1);
+	if (isFile) _BasicLogFile(pFile, logTime, "ERROR", _Format, v1);
+	if (isCEX) _BasicLogCEX(cexInst, logTime, printColor, FOREGROUND_RED, "ERROR", _Format, v1);
+	// Insert event.
+
 	va_end(v1);
 }
 
-void Logger::OverrideLogFunction(_In_opt_ LoggerOverrideFunctionTy _LogOverride, _In_ LogLevel _Level) {
+bool Logger::AddEventFunction(_In_ tLoggerFunction _Function, LogLevel _Level) {
 	switch (_Level) {
 	case LogLevel::Success:
-		this->_LogSuccessOverride = _LogOverride;
-		return;
+		return SuccessEvent.Add(_Function);
 	case LogLevel::Info:
-		this->_LogInfoOverride = _LogOverride;
-		return;
+		return InfoEvent.Add(_Function);
 	case LogLevel::Warning:
-		this->_LogWarningOverride = _LogOverride;
-		return;
+		return WarningEvent.Add(_Function);
 	case LogLevel::Error:
-		this->_LogErrorOverride = _LogOverride;
-		return;
-	default:
-		return;
+		return ErrorEvent.Add(_Function);
+	case LogLevel::All:
+		return SuccessEvent.Add(_Function) && InfoEvent.Add(_Function) && WarningEvent.Add(_Function) && ErrorEvent.Add(_Function);
+	}
+}
+
+bool Logger::RemoveEventFunction(_In_ tLoggerFunction _Function, LogLevel _Level) {
+	switch (_Level) {
+	case LogLevel::Success:
+		return SuccessEvent.Remove(_Function);
+	case LogLevel::Info:
+		return InfoEvent.Remove(_Function);
+	case LogLevel::Warning:
+		return WarningEvent.Remove(_Function);
+	case LogLevel::Error:
+		return ErrorEvent.Remove(_Function);
+	case LogLevel::All:
+		return SuccessEvent.Remove(_Function) && InfoEvent.Remove(_Function) && WarningEvent.Remove(_Function) && ErrorEvent.Remove(_Function);
 	}
 }
 

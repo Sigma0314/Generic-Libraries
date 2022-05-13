@@ -1,99 +1,83 @@
 #ifndef LIB_LOGGING_H
 #define LIB_LOGGING_H
 
-#include <stdio.h>		// FILE, va_list, fprintf, stderr, vfprintf, fputc, 
-#include <Windows.h>	// SetConsoleTextAttribute, WORD, HANDLE, SYSTEMTIME, GetSystemTime
+#include <stdio.h>
+#include <Windows.h>
 
 #include "EnvVar.h"
-#include "Error.h"		// Error
-
-#define LOGFN_OVERRIDE(_FnName) bool __fastcall _FnName(NS_NAME::LoggerFlags* _This, const char* _Format, va_list _Args)
+#include "ConsoleEx.h"
+#include "Misc.h"
 
 LIB_BEGIN
 
-enum class LogLevel {
-	Success,
-	Info,
-	Warning,
-	Error
-};
+enum class LogLevel { Success, Info, Warning, Error, All };
 
-enum class ColorSetting {
-	PrefixOnly,
-	TextOnly,
-	PrefixAndTime,
-	All
-};
+struct LoggerParams {
+	bool isCEX;
+	bool isConsole;
+	bool isFile;
+	bool isEvent;
 
-struct LoggerFlags {
-	LogLevel _DefaultLogLevel;
-	ColorSetting _ColorSetting;
-	bool _LogToStdErr;
-	bool _LogToFile;
-	bool _LogTime;
-	FILE* _LogFile;
+	bool bPrintTime;
+	bool bPrintColor;
+
+	ConsoleEx* pConsoleExInstance;
 	HANDLE hConsole;
+	FILE* pFile;
 };
 
 class Logger {
+public:
+	typedef void(__cdecl* tLoggerFunction)(Logger*, LoggerParams*, const char* _Prefix, const char* _Format, va_list _Args);
+
 private:
-	using LoggerOverrideFunctionTy = bool(__fastcall*)(LoggerFlags*, const char*, va_list);
+	class LoggerEvent {
+		tLoggerFunction _HandlerArray[128];
+		size_t _Count;
 
-	LogLevel _DefaultLogLevel;
-	ColorSetting _ColorSetting;
-	bool _LogToStdErr;
-	bool _LogToFile;
-	bool _LogTime;
-	FILE* _LogFile;
-	HANDLE hConsole;
+	public:
+		inline LoggerEvent() : _Count(0) { memset(_HandlerArray, NULL, sizeof(_HandlerArray)); }
+		void Invoke(Logger* _This, LoggerParams* _Params, const char* _Prefix, const char* _Format, va_list _Args);
+		bool Add(tLoggerFunction _Handler);
+		bool Remove(tLoggerFunction _Handler);
+	};
 
-	LoggerFlags _Flags;
+	bool isCEX;
+	bool isConsole;
+	bool isFile;
+	bool isEvent;
 
-	inline LoggerFlags* RefreshFlags() {
-		this->_Flags = {
-			this->_DefaultLogLevel,
-			this->_ColorSetting,
-			this->_LogToStdErr,
-			this->_LogToFile,
-			this->_LogTime,
-			this->_LogFile,
-			this->hConsole
-		};
-		return &this->_Flags;
-	}
+	bool logTime; // ALL
+	bool printColor; // CEX & Console
 
-	LoggerOverrideFunctionTy _LogSuccessOverride;
-	LoggerOverrideFunctionTy _LogInfoOverride;
-	LoggerOverrideFunctionTy _LogWarningOverride;
-	LoggerOverrideFunctionTy _LogErrorOverride;
+	ConsoleEx* cexInst; // CEX
+	HANDLE hConsole; // Console
+	FILE* pFile; // File
 
-	void _Log(const char* _Prefix, WORD _ConsoleAttribute, const char* _Format, va_list _Args);
-	void __fastcall _LogSuccess(const char* _Format, va_list _Args);
-	void __fastcall _LogInfo(const char* _Format, va_list _Args);
-	void __fastcall _LogWarning(const char* _Format, va_list _Args);
-	void __fastcall _LogError(const char* _Format, va_list _Args);
+	LoggerEvent SuccessEvent;
+	LoggerEvent InfoEvent;
+	LoggerEvent WarningEvent;
+	LoggerEvent ErrorEvent;
+
+	LoggerParams p;
+	LoggerParams* GetParams();
+
+	static void _BasicLogFile(FILE* pFile, bool bLogTime, const char* pPrefix, const char* pFormat, va_list pArgs);
+	static void _BasicLogConsole(FILE* pStream, bool bLogTime, bool bPrintColor, HANDLE hOut, WORD wColor, const char* pPrefix, const char* pFormat, va_list pArgs);
+	static void _BasicLogCEX(ConsoleEx* pConsoleEx, bool bLogTime, bool bPrintColor, WORD wColor, const char* pPrefix, const char* pFormat, va_list pArgs);
 
 public:
-	Logger() :
-		_DefaultLogLevel(LogLevel::Info), _ColorSetting(ColorSetting::PrefixOnly), _LogToStdErr(false), _LogToFile(false), _LogTime(false), _LogFile(nullptr), hConsole(nullptr),
-		_LogSuccessOverride(nullptr), _LogInfoOverride(nullptr), _LogWarningOverride(nullptr), _LogErrorOverride(nullptr), _Flags() {}
+	Logger() : isCEX(false), isConsole(false), isFile(false), isEvent(false), logTime(false), printColor(false), cexInst(nullptr), hConsole(nullptr), pFile(nullptr) {}; // 0-arg ctor.
+	Logger(bool _Console, bool _File, bool _Event, bool _PrintColor = true, bool _PrintTime = true); // Normal ctor.
+	Logger(ConsoleEx* _ConsoleEx, bool _PrintColor = true, bool _PrintTime = true); // ConsoleEx ctor.
 
-	Logger(
-		_In_ bool _LogToConsole,
-		_In_ bool _LogToFile,
-		_In_opt_ LogLevel _DefaultLogLevel = LogLevel::Info,
-		_In_opt_ ColorSetting _ColorSetting = ColorSetting::PrefixOnly,
-		_In_opt_ bool _LogTime = true
-	);
-	~Logger();
-
-	void Log(_In_z_ _Printf_format_string_ const char* _Format, ...);
 	void LogSuccess(_In_z_ _Printf_format_string_ const char* _Format, ...);
 	void LogInfo(_In_z_ _Printf_format_string_ const char* _Format, ...);
 	void LogWarning(_In_z_ _Printf_format_string_ const char* _Format, ...);
 	void LogError(_In_z_ _Printf_format_string_ const char* _Format, ...);
 
-	void OverrideLogFunction(_In_opt_ LoggerOverrideFunctionTy _LogOverride, _In_ LogLevel _Level);
+	bool AddEventFunction(_In_ tLoggerFunction _Function, LogLevel _Level);
+	bool RemoveEventFunction(_In_ tLoggerFunction _Function, LogLevel _Level);
 };
 
 LIB_END

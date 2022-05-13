@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{603eeede-395b-43a5-930e-15cb1a2e30c7}</ProjectGuid>
-    <RootNamespace>CPPLibraries</RootNamespace>
+    <ProjectGuid>{4f25f5ac-1e01-4055-b665-00dccaffeaf8}</ProjectGuid>
+    <RootNamespace>ConsoleExProc</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -139,45 +139,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CPP_Libraries.cpp" />
-    <ClCompile Include="lib\src\buffer.c" />
-    <ClCompile Include="lib\src\ConsoleEx.cpp" />
-    <ClCompile Include="lib\src\Error.cpp" />
-    <ClCompile Include="lib\src\ExtMem.cpp" />
-    <ClCompile Include="lib\src\hde32.c" />
-    <ClCompile Include="lib\src\hde64.c" />
-    <ClCompile Include="lib\src\hook.c" />
-    <ClCompile Include="lib\src\Logging.cpp" />
-    <ClCompile Include="lib\src\Maths.cpp" />
-    <ClCompile Include="lib\src\Mem.cpp" />
-    <ClCompile Include="lib\src\MemShared.cpp" />
-    <ClCompile Include="lib\src\Misc.cpp" />
-    <ClCompile Include="lib\src\Pipes.cpp" />
-    <ClCompile Include="lib\src\trampoline.c" />
+    <ClCompile Include="..\CPP_Libraries\lib\src\Pipes.cpp" />
+    <ClCompile Include="ConsoleExProc.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="lib\include\buffer.h" />
-    <ClInclude Include="lib\include\Collections.h" />
-    <ClInclude Include="lib\include\ConsoleEx.h" />
-    <ClInclude Include="lib\include\Const.h" />
-    <ClInclude Include="lib\include\EnvVar.h" />
-    <ClInclude Include="lib\include\Error.h" />
-    <ClInclude Include="lib\include\ExtMem.h" />
-    <ClInclude Include="lib\include\hde32.h" />
-    <ClInclude Include="lib\include\hde64.h" />
-    <ClInclude Include="lib\include\Key.h" />
-    <ClInclude Include="lib\include\Lib.h" />
-    <ClInclude Include="lib\include\Logging.h" />
-    <ClInclude Include="lib\include\Maths.h" />
-    <ClInclude Include="lib\include\Mem.h" />
-    <ClInclude Include="lib\include\MemShared.h" />
-    <ClInclude Include="lib\include\MinHook.h" />
-    <ClInclude Include="lib\include\Misc.h" />
-    <ClInclude Include="lib\include\Pipes.h" />
-    <ClInclude Include="lib\include\pstdint.h" />
-    <ClInclude Include="lib\include\table32.h" />
-    <ClInclude Include="lib\include\table64.h" />
-    <ClInclude Include="lib\include\trampoline.h" />
+    <ClInclude Include="..\CPP_Libraries\lib\include\EnvVar.h" />
+    <ClInclude Include="..\CPP_Libraries\lib\include\Pipes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

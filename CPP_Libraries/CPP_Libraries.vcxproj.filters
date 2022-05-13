@@ -36,9 +36,6 @@
     <ClCompile Include="lib\src\hook.c">
       <Filter>Source Files\Lib Src</Filter>
     </ClCompile>
-    <ClCompile Include="lib\src\Logging.cpp">
-      <Filter>Source Files\Lib Src</Filter>
-    </ClCompile>
     <ClCompile Include="lib\src\Maths.cpp">
       <Filter>Source Files\Lib Src</Filter>
     </ClCompile>
@@ -59,6 +56,15 @@
     </ClCompile>
     <ClCompile Include="CPP_Libraries.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\src\ConsoleEx.cpp">
+      <Filter>Source Files\Lib Src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\src\Pipes.cpp">
+      <Filter>Source Files\Lib Src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\src\Logging.cpp">
+      <Filter>Source Files\Lib Src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -92,9 +98,6 @@
     <ClInclude Include="lib\include\Lib.h">
       <Filter>Header Files\Lib Incl</Filter>
     </ClInclude>
-    <ClInclude Include="lib\include\Logging.h">
-      <Filter>Header Files\Lib Incl</Filter>
-    </ClInclude>
     <ClInclude Include="lib\include\Maths.h">
       <Filter>Header Files\Lib Incl</Filter>
     </ClInclude>
@@ -120,6 +123,15 @@
       <Filter>Header Files\Lib Incl</Filter>
     </ClInclude>
     <ClInclude Include="lib\include\Error.h">
+      <Filter>Header Files\Lib Incl</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\ConsoleEx.h">
+      <Filter>Header Files\Lib Incl</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\Pipes.h">
+      <Filter>Header Files\Lib Incl</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\Logging.h">
       <Filter>Header Files\Lib Incl</Filter>
     </ClInclude>
   </ItemGroup>

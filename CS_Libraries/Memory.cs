@@ -82,6 +82,15 @@ namespace Lib
             [DllImport("kernel32.dll", CallingConvention = CallingConvention.StdCall, SetLastError = true)]
             private static extern bool VirtualQueryEx(IntPtr hProcess, IntPtr lpAddress, out MemoryBasicInformation mbi, uint dwLength);
 
+            [DllImport("Convert.dll", CallingConvention = CallingConvention.StdCall)]
+            private static extern ulong ByteVToUInt64(byte[] bytes);
+
+            [DllImport("Convert.dll", CallingConvention = CallingConvention.StdCall)]
+            private static extern uint ByteVToUInt32(byte[] bytes);
+
+            [DllImport("Convert.dll", CallingConvention = CallingConvention.StdCall)]
+            private static extern ushort ByteVToUInt16(byte[] bytes);
+
             private ulong _Base;
             private uint _Size;
             private uint _ProcessId;
