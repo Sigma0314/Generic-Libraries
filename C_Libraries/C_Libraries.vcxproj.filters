@@ -13,38 +13,96 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Lib Incl">
+      <UniqueIdentifier>{467b7ec3-857e-4a35-8e6b-8be353740a09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lib Incl\MinHook">
+      <UniqueIdentifier>{5c3a91e8-8861-4c68-bb5a-f99de047bcf6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib Src">
+      <UniqueIdentifier>{11e4bb78-6688-47be-93f2-715f83cb967b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lib Src\MinHook">
+      <UniqueIdentifier>{e625e913-c394-4d28-a590-01f0654eae16}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="C_Libraries.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="error.c">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="lib\src\buffer.c">
+      <Filter>Source Files\Lib Src\MinHook</Filter>
     </ClCompile>
-    <ClCompile Include="mem_secure.c">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="lib\src\hde32.c">
+      <Filter>Source Files\Lib Src\MinHook</Filter>
     </ClCompile>
-    <ClCompile Include="mem.c">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="lib\src\hde64.c">
+      <Filter>Source Files\Lib Src\MinHook</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\src\hook.c">
+      <Filter>Source Files\Lib Src\MinHook</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\src\trampoline.c">
+      <Filter>Source Files\Lib Src\MinHook</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\src\collections.c">
+      <Filter>Source Files\Lib Src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\src\error.c">
+      <Filter>Source Files\Lib Src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\src\pipes.c">
+      <Filter>Source Files\Lib Src</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\src\consoleex.c">
+      <Filter>Source Files\Lib Src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="mem.h">
-      <Filter>Header Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="def.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="lib\include\def.h">
+      <Filter>Header Files\Lib Incl</Filter>
     </ClInclude>
-    <ClInclude Include="error.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="lib\include\envvar.h">
+      <Filter>Header Files\Lib Incl</Filter>
     </ClInclude>
-    <ClInclude Include="mem_secure.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="lib\include\collections.h">
+      <Filter>Header Files\Lib Incl</Filter>
     </ClInclude>
-    <ClInclude Include="tstdio.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="lib\include\buffer.h">
+      <Filter>Header Files\Lib Incl\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\hde32.h">
+      <Filter>Header Files\Lib Incl\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\hde64.h">
+      <Filter>Header Files\Lib Incl\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\pstdint.h">
+      <Filter>Header Files\Lib Incl\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\table32.h">
+      <Filter>Header Files\Lib Incl\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\table64.h">
+      <Filter>Header Files\Lib Incl\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\trampoline.h">
+      <Filter>Header Files\Lib Incl\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\lib.h">
+      <Filter>Header Files\Lib Incl</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\MinHook.h">
+      <Filter>Header Files\Lib Incl\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\error.h">
+      <Filter>Header Files\Lib Incl</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\consoleex.h">
+      <Filter>Header Files\Lib Incl</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\pipes.h">
+      <Filter>Header Files\Lib Incl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

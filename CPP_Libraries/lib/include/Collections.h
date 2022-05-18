@@ -206,10 +206,10 @@ class RoundedDynamicArray {
 
 	static size_t RoundedArraySize(size_t _Size) {
 		size_t byteSize = _Size * sizeof(_Ty);
-		size_t cnt = byteSize / c_PageSize;
+		// size_t cnt = byteSize / c_PageSize;
 
-		if (byteSize % c_PageSize) return ((cnt + 1) * c_PageSize) / sizeof(_Ty);
-		else return (cnt * c_PageSize) / sizeof(_Ty);
+		if (byteSize % c_PageSize) return (byteSize + c_PageSize) / sizeof(_Ty);
+		else return (byteSize) / sizeof(_Ty);
 	}
 
 	void Realloc(size_t _NewSize) {

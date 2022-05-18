@@ -66,7 +66,7 @@ bool OpenPipe(_Out_ NamedPipe* _Pipe, _In_ const char* _BaseName, _In_opt_ const
 	_Pipe->hPipe = CreateFileA(
 		szBuffer,
 		(DWORD)(_OpenMode == PipeAccess::Duplex ? GENERIC_READ | GENERIC_WRITE : (_OpenMode == PipeAccess::Inbound ? GENERIC_READ : GENERIC_WRITE)),
-		NULL,
+		FILE_SHARE_READ | FILE_SHARE_WRITE,
 		nullptr,
 		OPEN_EXISTING,
 		FILE_ATTRIBUTE_NORMAL,

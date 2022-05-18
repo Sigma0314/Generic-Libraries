@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -144,18 +144,32 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="C_Libraries.c" />
-    <ClCompile Include="error.c" />
-    <ClCompile Include="mem.c" />
-    <ClCompile Include="mem_secure.c" />
+    <ClCompile Include="lib\src\buffer.c" />
+    <ClCompile Include="lib\src\collections.c" />
+    <ClCompile Include="lib\src\consoleex.c" />
+    <ClCompile Include="lib\src\error.c" />
+    <ClCompile Include="lib\src\hde32.c" />
+    <ClCompile Include="lib\src\hde64.c" />
+    <ClCompile Include="lib\src\hook.c" />
+    <ClCompile Include="lib\src\pipes.c" />
+    <ClCompile Include="lib\src\trampoline.c" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="mem.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="error.h" />
-    <ClInclude Include="def.h" />
-    <ClInclude Include="mem_secure.h" />
-    <ClInclude Include="tstdio.h" />
+    <ClInclude Include="lib\include\buffer.h" />
+    <ClInclude Include="lib\include\collections.h" />
+    <ClInclude Include="lib\include\consoleex.h" />
+    <ClInclude Include="lib\include\def.h" />
+    <ClInclude Include="lib\include\envvar.h" />
+    <ClInclude Include="lib\include\error.h" />
+    <ClInclude Include="lib\include\hde32.h" />
+    <ClInclude Include="lib\include\hde64.h" />
+    <ClInclude Include="lib\include\lib.h" />
+    <ClInclude Include="lib\include\MinHook.h" />
+    <ClInclude Include="lib\include\pipes.h" />
+    <ClInclude Include="lib\include\pstdint.h" />
+    <ClInclude Include="lib\include\table32.h" />
+    <ClInclude Include="lib\include\table64.h" />
+    <ClInclude Include="lib\include\trampoline.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

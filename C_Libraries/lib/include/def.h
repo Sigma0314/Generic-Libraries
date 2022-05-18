@@ -3,6 +3,10 @@
 
 #define VOID				void
 
+#define STDCALL				__stdcall
+#define CDECL				__cdecl
+#define APIENTRY			STDCALL
+
 #define TRUE				1
 #define FALSE				0
 
@@ -23,6 +27,7 @@ typedef unsigned short		USHORT,		* LPUSHORT;
 typedef unsigned int		UINT,		* LPUINT;
 typedef unsigned long		ULONG,		* LPULONG;
 typedef unsigned long long	ULLONG,		* LPULLONG;
+typedef unsigned long long	SIZE_T,		* LPSIZE_T;
 
 typedef char				INT8,		* LPINT8;
 typedef short				INT16,		* LPINT16;

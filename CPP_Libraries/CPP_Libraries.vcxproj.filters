@@ -19,21 +19,15 @@
     <Filter Include="Source Files\Lib Src">
       <UniqueIdentifier>{1ecfa463-852b-4c08-b8c2-cc13b0bafb5c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Lib Src\MinHook">
+      <UniqueIdentifier>{48d4efe2-09e7-465e-980e-b118b1de0bb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Lib Incl\MinHook">
+      <UniqueIdentifier>{9644ede3-e0ce-4011-937d-02fbeea7de48}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="lib\src\buffer.c">
-      <Filter>Source Files\Lib Src</Filter>
-    </ClCompile>
     <ClCompile Include="lib\src\ExtMem.cpp">
-      <Filter>Source Files\Lib Src</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\src\hde32.c">
-      <Filter>Source Files\Lib Src</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\src\hde64.c">
-      <Filter>Source Files\Lib Src</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\src\hook.c">
       <Filter>Source Files\Lib Src</Filter>
     </ClCompile>
     <ClCompile Include="lib\src\Maths.cpp">
@@ -46,9 +40,6 @@
       <Filter>Source Files\Lib Src</Filter>
     </ClCompile>
     <ClCompile Include="lib\src\Misc.cpp">
-      <Filter>Source Files\Lib Src</Filter>
-    </ClCompile>
-    <ClCompile Include="lib\src\trampoline.c">
       <Filter>Source Files\Lib Src</Filter>
     </ClCompile>
     <ClCompile Include="lib\src\Error.cpp">
@@ -66,14 +57,23 @@
     <ClCompile Include="lib\src\Logging.cpp">
       <Filter>Source Files\Lib Src</Filter>
     </ClCompile>
+    <ClCompile Include="lib\src\buffer.c">
+      <Filter>Source Files\Lib Src\MinHook</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\src\hde32.c">
+      <Filter>Source Files\Lib Src\MinHook</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\src\hook.c">
+      <Filter>Source Files\Lib Src\MinHook</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\src\hde64.c">
+      <Filter>Source Files\Lib Src\MinHook</Filter>
+    </ClCompile>
+    <ClCompile Include="lib\src\trampoline.c">
+      <Filter>Source Files\Lib Src\MinHook</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="lib\include\trampoline.h">
-      <Filter>Header Files\Lib Incl</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\include\buffer.h">
-      <Filter>Header Files\Lib Incl</Filter>
-    </ClInclude>
     <ClInclude Include="lib\include\Collections.h">
       <Filter>Header Files\Lib Incl</Filter>
     </ClInclude>
@@ -84,12 +84,6 @@
       <Filter>Header Files\Lib Incl</Filter>
     </ClInclude>
     <ClInclude Include="lib\include\ExtMem.h">
-      <Filter>Header Files\Lib Incl</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\include\hde32.h">
-      <Filter>Header Files\Lib Incl</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\include\hde64.h">
       <Filter>Header Files\Lib Incl</Filter>
     </ClInclude>
     <ClInclude Include="lib\include\Key.h">
@@ -107,19 +101,7 @@
     <ClInclude Include="lib\include\MemShared.h">
       <Filter>Header Files\Lib Incl</Filter>
     </ClInclude>
-    <ClInclude Include="lib\include\MinHook.h">
-      <Filter>Header Files\Lib Incl</Filter>
-    </ClInclude>
     <ClInclude Include="lib\include\Misc.h">
-      <Filter>Header Files\Lib Incl</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\include\pstdint.h">
-      <Filter>Header Files\Lib Incl</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\include\table32.h">
-      <Filter>Header Files\Lib Incl</Filter>
-    </ClInclude>
-    <ClInclude Include="lib\include\table64.h">
       <Filter>Header Files\Lib Incl</Filter>
     </ClInclude>
     <ClInclude Include="lib\include\Error.h">
@@ -133,6 +115,30 @@
     </ClInclude>
     <ClInclude Include="lib\include\Logging.h">
       <Filter>Header Files\Lib Incl</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\hde32.h">
+      <Filter>Header Files\Lib Incl\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\hde64.h">
+      <Filter>Header Files\Lib Incl\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\buffer.h">
+      <Filter>Header Files\Lib Incl\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\pstdint.h">
+      <Filter>Header Files\Lib Incl\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\table32.h">
+      <Filter>Header Files\Lib Incl\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\table64.h">
+      <Filter>Header Files\Lib Incl\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\trampoline.h">
+      <Filter>Header Files\Lib Incl\MinHook</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\include\MinHook.h">
+      <Filter>Header Files\Lib Incl\MinHook</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
