@@ -1,6 +1,9 @@
 #ifndef LIB_MATHS_H
 #define LIB_MATHS_H
 
+#include <stdlib.h> // srand, rand
+#include <time.h> // time
+
 #include "EnvVar.h"
 #include "Collections.h" // LiteralDynamicArray, RoundedDynamicArray
 
@@ -33,6 +36,8 @@ template<typename _Ty>
 double Median(LiteralDynamicArray<_Ty>& _Array) {
 
 }
+
+int Random(int _Low = 0, int _High = RAND_MAX);
 
 LIB_END
 

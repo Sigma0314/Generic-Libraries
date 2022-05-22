@@ -1,7 +1,7 @@
 //==================================================>
 // Generic Libraries.								|
 //--------------------------------------------------|
-// Author: Sigma (Sigma.#0001)						|
+// Author: Sigma (https://github.com/Sigma0314)		|
 //--------------------------------------------------|
 // Notes ->											|
 //													|
@@ -26,17 +26,17 @@
 //													|
 //==================================================>
 
-#pragma once
-
 #include "EnvVar.h"
-#include "Mem.h"
-#include "ExtMem.h"
-#include "MemShared.h"
+
 #include "Collections.h"
+#include "ConsoleEx.h"
 #include "Const.h"
-#include "Logging.h"
 #include "Error.h"
-#include "Misc.h"
-#include "MinHook.h"
+#include "ExtMem.h"
 #include "Key.h"
+#include "Logging.h"
 #include "Maths.h"
+#include "Mem.h"
+#include "MemShared.h"
+#include "Misc.h"
+#include "Pipes.h"

@@ -6,17 +6,17 @@
 #include "pipes.h"
 
 typedef struct _CONSOLEEXA {
+	CHAR szName[64];
 	NAMEDPIPEA msgsend;
 	NAMEDPIPEA msgrec;
 	NAMEDPIPEA prntout;
-	HANDLE hRecThread;
 } CONSOLEEXA, * LPCONSOLEEXA;
 
 typedef struct _CONSOLEEXW {
+	WCHAR szName[64];
 	NAMEDPIPEW msgsend;
 	NAMEDPIPEW msgrec;
 	NAMEDPIPEW prntout;
-	HANDLE hRecThread;
 } CONSOLEEXW, * LPCONSOLEEXW;
 
 BOOL APIENTRY CreateConsoleExA(
@@ -55,6 +55,8 @@ typedef CONSOLEEXW CONSOLEEX;
 typedef LPCONSOLEEXW LPCONSOLEEX;
 
 #define CreateConsoleEx CreateConsoleExW
+#define DestroyConsoleEx DestroyConsoleExW
+#define CEXPrintFormat CEXPrintFormatW
 
 #else
 
@@ -62,6 +64,8 @@ typedef CONSOLEEXA CONSOLEEX;
 typedef LPCONSOLEEXA LPCONSOLEEX;
 
 #define CreateConsoleEx CreateConsoleExA
+#define DestroyConsoleEx DestroyConsoleExA
+#define CEXPrintFormat CEXPrintFormatA
 
 #endif // UNICODE
 

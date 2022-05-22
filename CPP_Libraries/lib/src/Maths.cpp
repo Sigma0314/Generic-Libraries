@@ -14,4 +14,16 @@ double Power(const double _Constant, const double _Exponent) {
 	else return 1;
 }
 
+int Random(int _Low, int _High) {
+	int ret = NULL;
+
+	do {
+		srand(time(NULL));
+		ret = rand();
+		if (ret) ret %= _High + 1;
+	} while (!IN_RANGE(ret, _Low, _High));
+
+	return ret;
+}
+
 LIB_END

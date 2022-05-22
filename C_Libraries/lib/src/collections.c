@@ -5,8 +5,8 @@ BOOL APIENTRY AllocHeapArray(
 	_Out_ LPHEAP_ARRAY lpArray,
 	_In_ SIZE_T nSize
 ) {
-	if (!lpArray) THROW(NULLPARAM, FALSE);
-	if (lpArray->bActive) THROW(ALREADYREGISTERED, FALSE);
+	if (!lpArray) THROW(NULL_PARAM, FALSE);
+	if (lpArray->bActive) THROW(ALREADY_REGISTERED, FALSE);
 
 	lpArray->lpArray = malloc(nSize);
 	lpArray->nSize = nSize;
@@ -20,8 +20,8 @@ BOOL APIENTRY Alloc2DHeapArray(
 	_In_ SIZE_T nSize1,
 	_In_ SIZE_T nSize2
 ) {
-	if (!lpArray) THROW(NULLPARAM, FALSE);
-	if (lpArray->bActive) THROW(ALREADYREGISTERED, FALSE);
+	if (!lpArray) THROW(NULL_PARAM, FALSE);
+	if (lpArray->bActive) THROW(ALREADY_REGISTERED, FALSE);
 
 	lpArray->lpArray = (LPVOID*)malloc(nSize1 * PTRSIZE);
 	for (SIZE_T i = 0; i < nSize1; i++)
@@ -40,8 +40,8 @@ BOOL APIENTRY Alloc3DHeapArray(
 	_In_ SIZE_T nSize2,
 	_In_ SIZE_T nSize3
 ) {
-	if (!lpArray) THROW(NULLPARAM, FALSE);
-	if (lpArray->bActive) THROW(ALREADYREGISTERED, FALSE);
+	if (!lpArray) THROW(NULL_PARAM, FALSE);
+	if (lpArray->bActive) THROW(ALREADY_REGISTERED, FALSE);
 
 	lpArray->lpArray = (LPVOID**)malloc(nSize1 * PTRSIZE);
 	for (SIZE_T i = 0; i < nSize1; i++) {
@@ -60,8 +60,8 @@ BOOL APIENTRY Alloc3DHeapArray(
 BOOL APIENTRY AllocRDA(
 	_Out_ LPROUNDED_DYNAMIC_ARRAY lpArray
 ) {
-	if (!lpArray) THROW(NULLPARAM, FALSE);
-	if (lpArray->bActive) THROW(ALREADYREGISTERED, FALSE);
+	if (!lpArray) THROW(NULL_PARAM, FALSE);
+	if (lpArray->bActive) THROW(ALREADY_REGISTERED, FALSE);
 
 	lpArray->lpArray = malloc(RDA_PAGE_SIZE);
 	lpArray->nSize = NULL;
@@ -75,8 +75,8 @@ BOOL APIENTRY AllocRDA(
 BOOL APIENTRY AllocLDA(
 	_Out_ LPLITERAL_DYNAMIC_ARRAY lpArray
 ) {
-	if (!lpArray) THROW(NULLPARAM, FALSE);
-	if (lpArray->bActive) THROW(ALREADYREGISTERED, FALSE);
+	if (!lpArray) THROW(NULL_PARAM, FALSE);
+	if (lpArray->bActive) THROW(ALREADY_REGISTERED, FALSE);
 
 	lpArray->lpArray = NULL;
 	lpArray->nSize = NULL;
@@ -88,8 +88,8 @@ BOOL APIENTRY AllocLDA(
 BOOL APIENTRY DeleteHeapArray(
 	_In_ LPHEAP_ARRAY lpArray
 ) {
-	if (!lpArray) THROW(NULLPARAM, FALSE);
-	if (!lpArray->bActive) THROW(ALREADYREGISTERED, FALSE);
+	if (!lpArray) THROW(NULL_PARAM, FALSE);
+	if (!lpArray->bActive) THROW(ALREADY_REGISTERED, FALSE);
 
 	free(lpArray->lpArray);
 
@@ -100,8 +100,8 @@ BOOL APIENTRY DeleteHeapArray(
 BOOL APIENTRY Delete2DHeapArray(
 	_In_ LPHEAP_2DARRAY lpArray
 ) {
-	if (!lpArray) THROW(NULLPARAM, FALSE);
-	if (!lpArray->bActive) THROW(ALREADYREGISTERED, FALSE);
+	if (!lpArray) THROW(NULL_PARAM, FALSE);
+	if (!lpArray->bActive) THROW(ALREADY_REGISTERED, FALSE);
 
 	for (SIZE_T i = 0; i < lpArray->nSize1; i++) free(lpArray->lpArray[i]);
 	free(lpArray->lpArray);
@@ -113,8 +113,8 @@ BOOL APIENTRY Delete2DHeapArray(
 BOOL APIENTRY Delete3DHeapArray(
 	_In_ LPHEAP_3DARRAY lpArray
 ) {
-	if (!lpArray) THROW(NULLPARAM, FALSE);
-	if (!lpArray->bActive) THROW(ALREADYREGISTERED, FALSE);
+	if (!lpArray) THROW(NULL_PARAM, FALSE);
+	if (!lpArray->bActive) THROW(ALREADY_REGISTERED, FALSE);
 
 	for (SIZE_T i = 0; i < lpArray->nSize1; i++) {
 		for (SIZE_T j = 0; j < lpArray->nSize2; i++) free(lpArray->lpArray[i][j]);
@@ -129,8 +129,8 @@ BOOL APIENTRY Delete3DHeapArray(
 BOOL APIENTRY DeleteRDA(
 	_In_ LPROUNDED_DYNAMIC_ARRAY lpArray
 ) {
-	if (!lpArray) THROW(NULLPARAM, FALSE);
-	if (!lpArray->bActive) THROW(ALREADYREGISTERED, FALSE);
+	if (!lpArray) THROW(NULL_PARAM, FALSE);
+	if (!lpArray->bActive) THROW(ALREADY_REGISTERED, FALSE);
 
 	free(lpArray->lpArray);
 
@@ -141,8 +141,8 @@ BOOL APIENTRY DeleteRDA(
 BOOL APIENTRY DeleteLDA(
 	_In_ LPLITERAL_DYNAMIC_ARRAY lpArray
 ) {
-	if (!lpArray) THROW(NULLPARAM, FALSE);
-	if (!lpArray->bActive) THROW(ALREADYREGISTERED, FALSE);
+	if (!lpArray) THROW(NULL_PARAM, FALSE);
+	if (!lpArray->bActive) THROW(ALREADY_REGISTERED, FALSE);
 
 	free(lpArray->lpArray);
 
@@ -153,7 +153,7 @@ BOOL APIENTRY DeleteLDA(
 #define RDA_REALLOC_SIZE(nSize) (SIZE_T)((nSize % RDA_PAGE_SIZE) ? (nSize + RDA_PAGE_SIZE) : nSize)
 
 BOOL APIENTRY ReallocRDA(LPROUNDED_DYNAMIC_ARRAY lpArray, SIZE_T nNewSize) {
-	if (!lpArray) THROW(NULLPARAM, FALSE);
+	if (!lpArray) THROW(NULL_PARAM, FALSE);
 
 	LPVOID lpOld = lpArray->lpArray;
 	SIZE_T nOldSize = lpArray->nAllocSize;
@@ -170,7 +170,7 @@ BOOL APIENTRY ReallocRDA(LPROUNDED_DYNAMIC_ARRAY lpArray, SIZE_T nNewSize) {
 }
 
 BOOL APIENTRY ReallocLDA(LPLITERAL_DYNAMIC_ARRAY lpArray, SIZE_T nNewSize) {
-	if (!lpArray) THROW(NULLPARAM, FALSE);
+	if (!lpArray) THROW(NULL_PARAM, FALSE);
 
 	LPVOID lpOld = lpArray->lpArray;
 	SIZE_T nOldSize = lpArray->nSize;
@@ -192,7 +192,7 @@ BOOL APIENTRY PushBackRDA(
 	_In_ LPVOID lpData,
 	_In_ DWORD dwSize
 ) {
-	if (!lpArray || !lpData) THROW(NULLPARAM, FALSE);
+	if (!lpArray || !lpData) THROW(NULL_PARAM, FALSE);
 	if (!lpArray->bActive) THROW(INVALIDPARAM, FALSE);
 
 	if (lpArray->nSize + dwSize > lpArray->nAllocSize) ReallocRDA(lpArray, lpArray->nSize + dwSize);
@@ -207,7 +207,7 @@ BOOL APIENTRY PushBackLDA(
 	_In_ LPVOID lpData,
 	_In_ DWORD dwSize
 ) {
-	if (!lpArray || !lpData) THROW(NULLPARAM, FALSE);
+	if (!lpArray || !lpData) THROW(NULL_PARAM, FALSE);
 	if (!lpArray->bActive) THROW(INVALIDPARAM, FALSE);
 
 	SIZE_T nOldSize = lpArray->nSize;
@@ -222,7 +222,7 @@ BOOL APIENTRY PopBackRDA(
 	_Inout_ LPROUNDED_DYNAMIC_ARRAY lpArray,
 	_In_ SIZE_T nCount
 ) {
-	if (!lpArray || !nCount) THROW(NULLPARAM, FALSE);
+	if (!lpArray || !nCount) THROW(NULL_PARAM, FALSE);
 	if (!lpArray->bActive || !lpArray->nSize) THROW(INVALIDPARAM, FALSE);
 
 	memset((LPVOID)((ADDRESS)lpArray->lpArray + lpArray->nSize - nCount), 0x00, nCount);
@@ -234,7 +234,7 @@ BOOL APIENTRY PopBackLDA(
 	_Inout_ LPLITERAL_DYNAMIC_ARRAY lpArray,
 	_In_ SIZE_T nCount
 ) {
-	if (!lpArray || !nCount) THROW(NULLPARAM, FALSE);
+	if (!lpArray || !nCount) THROW(NULL_PARAM, FALSE);
 	if (!lpArray->bActive || !lpArray->nSize) THROW(INVALIDPARAM, FALSE);
 
 	return ReallocLDA(lpArray, lpArray->nSize - nCount);

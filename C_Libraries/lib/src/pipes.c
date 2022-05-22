@@ -4,9 +4,9 @@ BOOL APIENTRY CreateAPipe(
 	_Out_ LPPIPE lpPipe,
 	_In_ DWORD dwSize
 ) {
-	if (!lpPipe) THROW(NULLPARAM, FALSE);
+	if (!lpPipe) THROW(NULL_PARAM, FALSE);
 
-	if (!CreatePipe(&lpPipe->hReadPipe, &lpPipe->hWritePipe, NULL, dwSize)) THROW(WINFUNCTION, TRUE);
+	if (!CreatePipe(&lpPipe->hReadPipe, &lpPipe->hWritePipe, NULL, dwSize)) THROW(WIN_FUNCTION, TRUE);
 
 	lpPipe->dwSize = dwSize;
 
@@ -22,12 +22,12 @@ BOOL APIENTRY CreateNPipeA(
 	_In_ PIPE_MODE nPipeMode,
 	_In_ DWORD dwSize
 ) {
-	if (!lpPipe || !lpBaseName) THROW(NULLPARAM, FALSE);
+	if (!lpPipe || !lpBaseName) THROW(NULL_PARAM, FALSE);
 
 	sprintf_s(lpPipe->szName, MAX_PATH, "\\\\.\\pipe\\%s%s", lpBaseName, lpNameSuffix ? lpNameSuffix : "");
 
 	lpPipe->hPipe = CreateNamedPipeA(lpPipe->szName, (DWORD)nPipeAccess, (DWORD)nPipeMode, PIPE_UNLIMITED_INSTANCES, dwSize, dwSize, INFINITE, NULL);
-	if (lpPipe->hPipe == INVALID_HANDLE_VALUE) THROW(WINFUNCTION, TRUE);
+	if (lpPipe->hPipe == INVALID_HANDLE_VALUE) THROW(WIN_FUNCTION, TRUE);
 
 	lpPipe->dwSize = dwSize;
 	lpPipe->nPipeAccess = nPipeAccess;
@@ -44,12 +44,12 @@ BOOL APIENTRY CreateNPipeW(
 	_In_ PIPE_MODE nPipeMode,
 	_In_ DWORD dwSize
 ) {
-	if (!lpPipe || !lpBaseName) THROW(NULLPARAM, FALSE);
+	if (!lpPipe || !lpBaseName) THROW(NULL_PARAM, FALSE);
 
 	swprintf_s(lpPipe->szName, MAX_PATH, L"\\\\.\\pipe\\%s%s", lpBaseName, lpNameSuffix ? lpNameSuffix : L"");
 
 	lpPipe->hPipe = CreateNamedPipeW(lpPipe->szName, (DWORD)nPipeAccess, (DWORD)nPipeMode, PIPE_UNLIMITED_INSTANCES, dwSize, dwSize, INFINITE, NULL);
-	if (lpPipe->hPipe == INVALID_HANDLE_VALUE) THROW(WINFUNCTION, TRUE);
+	if (lpPipe->hPipe == INVALID_HANDLE_VALUE) THROW(WIN_FUNCTION, TRUE);
 
 	lpPipe->dwSize = dwSize;
 	lpPipe->nPipeAccess = nPipeAccess;
@@ -61,22 +61,22 @@ BOOL APIENTRY CreateNPipeW(
 BOOL APIENTRY CloseAPipe(
 	_In_ LPPIPE lpPipe
 ) {
-	if (!lpPipe) THROW(NULLPARAM, FALSE);
+	if (!lpPipe) THROW(NULL_PARAM, FALSE);
 
 	if (CloseHandle(lpPipe->hReadPipe) && CloseHandle(lpPipe->hWritePipe)) {
 		lpPipe->bActive = FALSE;
 		return SUCCEEDED;
 	}
 
-	else THROW(WINFUNCTION, TRUE);
+	else THROW(WIN_FUNCTION, TRUE);
 }
 
 BOOL APIENTRY CloseNPipeA(
 	_In_ LPNAMEDPIPEA lpPipe
 ) {
-	if (!lpPipe) THROW(NULLPARAM, FALSE);
+	if (!lpPipe) THROW(NULL_PARAM, FALSE);
 
-	if (!CloseHandle(lpPipe->hPipe)) THROW(WINFUNCTION, TRUE);
+	if (!CloseHandle(lpPipe->hPipe)) THROW(WIN_FUNCTION, TRUE);
 	
 	lpPipe->bActive = FALSE;
 	return SUCCEEDED;
@@ -85,9 +85,9 @@ BOOL APIENTRY CloseNPipeA(
 BOOL APIENTRY CloseNPipeW(
 	_In_ LPNAMEDPIPEW lpPipe
 ) {
-	if (!lpPipe) THROW(NULLPARAM, FALSE);
+	if (!lpPipe) THROW(NULL_PARAM, FALSE);
 
-	if (!CloseHandle(lpPipe->hPipe)) THROW(WINFUNCTION, TRUE);
+	if (!CloseHandle(lpPipe->hPipe)) THROW(WIN_FUNCTION, TRUE);
 
 	lpPipe->bActive = FALSE;
 	return SUCCEEDED;
@@ -99,7 +99,7 @@ BOOL APIENTRY OpenNPipeA(
 	_In_opt_ LPCSTR lpNameSuffix,
 	_In_ PIPE_ACCESS nPipeAccess
 ) {
-	if (!lpPipe) THROW(NULLPARAM, FALSE);
+	if (!lpPipe) THROW(NULL_PARAM, FALSE);
 
 	sprintf_s(lpPipe->szName, MAX_PATH, "\\\\.\\pipe\\%s%s", lpBaseName, lpNameSuffix ? lpNameSuffix : "");
 
@@ -113,7 +113,7 @@ BOOL APIENTRY OpenNPipeA(
 		NULL
 	);
 
-	if (lpPipe->hPipe == INVALID_HANDLE_VALUE) THROW(WINFUNCTION, TRUE);
+	if (lpPipe->hPipe == INVALID_HANDLE_VALUE) THROW(WIN_FUNCTION, TRUE);
 
 	lpPipe->dwSize = -1;
 	lpPipe->nPipeAccess = nPipeAccess;
@@ -128,7 +128,7 @@ BOOL APIENTRY OpenNPipeW(
 	_In_opt_ LPCWSTR lpNameSuffix,
 	_In_ PIPE_ACCESS nPipeAccess
 ) {
-	if (!lpPipe) THROW(NULLPARAM, FALSE);
+	if (!lpPipe) THROW(NULL_PARAM, FALSE);
 
 	swprintf_s(lpPipe->szName, MAX_PATH, L"\\\\.\\pipe\\%s%s", lpBaseName, lpNameSuffix ? lpNameSuffix : L"");
 
@@ -142,7 +142,7 @@ BOOL APIENTRY OpenNPipeW(
 		NULL
 	);
 
-	if (lpPipe->hPipe == INVALID_HANDLE_VALUE) THROW(WINFUNCTION, TRUE);
+	if (lpPipe->hPipe == INVALID_HANDLE_VALUE) THROW(WIN_FUNCTION, TRUE);
 
 	lpPipe->dwSize = -1;
 	lpPipe->nPipeAccess = nPipeAccess;
@@ -156,9 +156,9 @@ BOOL APIENTRY ReadAPipe(
 	_Out_writes_all_(dwSize) LPVOID lpBuffer,
 	_In_ DWORD dwSize
 ) {
-	if (!lpPipe) THROW(NULLPARAM, FALSE);
+	if (!lpPipe) THROW(NULL_PARAM, FALSE);
 
-	if (!ReadFile(lpPipe->hReadPipe, lpBuffer, dwSize, NULL, NULL)) THROW(WINFUNCTION, TRUE);
+	if (!ReadFile(lpPipe->hReadPipe, lpBuffer, dwSize, NULL, NULL)) THROW(WIN_FUNCTION, TRUE);
 
 	return SUCCEEDED;
 }
@@ -168,9 +168,9 @@ BOOL APIENTRY ReadNPipeA(
 	_Out_writes_all_(dwSize) LPVOID lpBuffer,
 	_In_ DWORD dwSize
 ) {
-	if (!lpPipe) THROW(NULLPARAM, FALSE);
+	if (!lpPipe) THROW(NULL_PARAM, FALSE);
 
-	if (!ReadFile(lpPipe->hPipe, lpBuffer, dwSize, NULL, NULL)) THROW(WINFUNCTION, TRUE);
+	if (!ReadFile(lpPipe->hPipe, lpBuffer, dwSize, NULL, NULL)) THROW(WIN_FUNCTION, TRUE);
 
 	return SUCCEEDED;
 }
@@ -180,9 +180,9 @@ BOOL APIENTRY ReadNPipeW(
 	_Out_writes_all_(dwSize) LPVOID lpBuffer,
 	_In_ DWORD dwSize
 ) {
-	if (!lpPipe) THROW(NULLPARAM, FALSE);
+	if (!lpPipe) THROW(NULL_PARAM, FALSE);
 
-	if (!ReadFile(lpPipe->hPipe, lpBuffer, dwSize, NULL, NULL)) THROW(WINFUNCTION, TRUE);
+	if (!ReadFile(lpPipe->hPipe, lpBuffer, dwSize, NULL, NULL)) THROW(WIN_FUNCTION, TRUE);
 
 	return SUCCEEDED;
 }
@@ -192,9 +192,9 @@ BOOL APIENTRY WriteAPipe(
 	_In_ LPCVOID lpBuffer,
 	_In_ DWORD dwSize
 ) {
-	if (!lpPipe) THROW(NULLPARAM, FALSE);
+	if (!lpPipe) THROW(NULL_PARAM, FALSE);
 
-	if (!WriteFile(lpPipe->hWritePipe, lpBuffer, dwSize, NULL, NULL)) THROW(WINFUNCTION, TRUE);
+	if (!WriteFile(lpPipe->hWritePipe, lpBuffer, dwSize, NULL, NULL)) THROW(WIN_FUNCTION, TRUE);
 
 	return SUCCEEDED;
 }
@@ -204,9 +204,9 @@ BOOL APIENTRY WriteNPipeA(
 	_In_ LPCVOID lpBuffer,
 	_In_ DWORD dwSize
 ) {
-	if (!lpPipe) THROW(NULLPARAM, FALSE);
+	if (!lpPipe) THROW(NULL_PARAM, FALSE);
 
-	if (!WriteFile(lpPipe->hPipe, lpBuffer, dwSize, NULL, NULL)) THROW(WINFUNCTION, TRUE);
+	if (!WriteFile(lpPipe->hPipe, lpBuffer, dwSize, NULL, NULL)) THROW(WIN_FUNCTION, TRUE);
 
 	return SUCCEEDED;
 }
@@ -216,9 +216,9 @@ BOOL APIENTRY WriteNPipeW(
 	_In_ LPCVOID lpBuffer,
 	_In_ DWORD dwSize
 ) {
-	if (!lpPipe) THROW(NULLPARAM, FALSE);
+	if (!lpPipe) THROW(NULL_PARAM, FALSE);
 
-	if (!WriteFile(lpPipe->hPipe, lpBuffer, dwSize, NULL, NULL)) THROW(WINFUNCTION, TRUE);
+	if (!WriteFile(lpPipe->hPipe, lpBuffer, dwSize, NULL, NULL)) THROW(WIN_FUNCTION, TRUE);
 
 	return SUCCEEDED;
 }
